@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-@Entity({ name: 'blog' })
+@Entity({ name: 'blogs' })
 export class BlogEntity {
   @PrimaryGeneratedColumn()
   id: number;

@@ -1,18 +1,14 @@
-import { AuthEntity } from 'src/auth/entities/auth.entity';
-import { CredentialEntity } from 'src/auth/entities/credential.entity';
 import { BlogEntity } from 'src/blog/entities/blog.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToMany,
-  OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'users' })
 export class UserEntity {
   @Column({ name: 'first_name', type: 'varchar', length: 30, nullable: false })
   firstName: string;
@@ -32,6 +28,12 @@ export class UserEntity {
   })
   email: string;
 
+  @Column({
+    name: 'password_hash',
+    nullable: false,
+  })
+  passwordHash: string;
+
   @CreateDateColumn({ name: 'created_at', nullable: true })
   registeredAt: string;
 
@@ -45,13 +47,4 @@ export class UserEntity {
     },
   )
   blogs: BlogEntity[];
-
-  @OneToOne(
-    () => CredentialEntity,
-    (credential: CredentialEntity) => {
-      credential.user;
-    },
-  )
-  @JoinColumn({ name: 'username' })
-  credential: CredentialEntity;
 }
