@@ -16,6 +16,7 @@ const blog_module_1 = require("./blog/blog.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const blog_entity_1 = require("./blog/entities/blog.entity");
 const user_entity_1 = require("./user/entities/user.entity");
+const core_1 = require("@nestjs/core");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -25,17 +26,27 @@ AppModule = __decorate([
             auth_module_1.AuthModule,
             blog_module_1.BlogModule,
             typeorm_1.TypeOrmModule.forRoot({
-                type: 'postgres',
+                type: 'mysql',
                 host: 'localhost',
-                port: 5432,
-                username: 'postgres',
+                port: 3306,
+                username: 'root',
                 database: 'nest_crud',
-                entities: [blog_entity_1.BlogEntity, user_entity_1.UserEntity],
+                entities: [user_entity_1.UserEntity, blog_entity_1.BlogEntity],
                 synchronize: true,
+            }),
+            common_1.CacheModule.register({
+                max: 100,
+                isGlobal: true,
             }),
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
+        providers: [
+            app_service_1.AppService,
+            {
+                provide: core_1.APP_INTERCEPTOR,
+                useClass: common_1.CacheInterceptor,
+            },
+        ],
     })
 ], AppModule);
 exports.AppModule = AppModule;

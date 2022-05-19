@@ -22,14 +22,38 @@ let UserService = class UserService {
     constructor(userRepo) {
         this.userRepo = userRepo;
     }
-    async register(createUserDto) {
-        let user = new user_entity_1.UserEntity();
-        user.username = createUserDto.username;
-        user.email = createUserDto.email;
-        user.firstName = createUserDto.firstname;
-        user.lastName = createUserDto.lastname;
-        user.passwordHash = await (0, bcrypt_1.hash)(createUserDto.password, 8);
-        return this.userRepo.save(user);
+    async createUser(userDto) {
+        let userEntity = new user_entity_1.UserEntity();
+        userEntity.username = userDto.username;
+        userEntity.email = userDto.email;
+        userEntity.firstName = userDto.firstname;
+        userEntity.lastName = userDto.lastname;
+        userEntity.passwordHash = await (0, bcrypt_1.hash)(userDto.password, 8);
+        return this.userRepo.save(userEntity);
+    }
+    async getMyProfile(username) {
+        const user = await this.userRepo.findOne(username);
+        if (user)
+            return user;
+        else
+            throw new common_1.HttpException('User not found', common_1.HttpStatus.NOT_FOUND);
+    }
+    async getUserProfile(username) {
+        const user = await this.userRepo.findOne(username, {
+            select: ['username', 'firstName', 'lastName'],
+        });
+        if (user)
+            return user;
+        else
+            throw new common_1.HttpException('User not fount', common_1.HttpStatus.NOT_FOUND);
+    }
+    async updateUser(username, userDto) {
+        let userEntity = this.userRepo.create({
+            firstName: userDto.firstname,
+            lastName: userDto.lastname,
+            email: userDto.email,
+        });
+        return this.userRepo.update(username, userEntity);
     }
 };
 UserService = __decorate([

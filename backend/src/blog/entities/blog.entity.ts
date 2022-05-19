@@ -20,5 +20,5 @@ export class BlogEntity {
 
   @ManyToOne(() => UserEntity, (user: UserEntity) => user.blogs)
   @JoinColumn({ name: 'created_by' })
-  createdBy: string;
+  createdBy: UserEntity;
 }

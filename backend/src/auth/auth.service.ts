@@ -17,12 +17,14 @@ export class AuthService {
 
   async authenticate(username: string, password: string): Promise<any> {
     let user: UserEntity = await this.userRepo.findOne(username);
-    let isValid: boolean = await compare(password, user.passwordHash);
-    if (isValid) {
-      const { passwordHash, ...result } = user;
-      return result;
-    } else
-      throw new HttpException('Invalid Credential', HttpStatus.BAD_REQUEST);
+    if (user) {
+      let isValid: boolean = await compare(password, user.passwordHash);
+      if (isValid) {
+        const { passwordHash, ...result } = user;
+        return result;
+      }
+    }
+    throw new HttpException('Invalid Credential', HttpStatus.BAD_REQUEST);
   }
 
   async login(username: string, password: string) {

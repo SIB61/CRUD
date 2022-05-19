@@ -37,13 +37,14 @@ let AuthService = class AuthService {
     }
     async authenticate(username, password) {
         let user = await this.userRepo.findOne(username);
-        let isValid = await (0, bcrypt_1.compare)(password, user.passwordHash);
-        if (isValid) {
-            const { passwordHash } = user, result = __rest(user, ["passwordHash"]);
-            return result;
+        if (user) {
+            let isValid = await (0, bcrypt_1.compare)(password, user.passwordHash);
+            if (isValid) {
+                const { passwordHash } = user, result = __rest(user, ["passwordHash"]);
+                return result;
+            }
         }
-        else
-            throw new common_1.HttpException('Invalid Credential', common_1.HttpStatus.BAD_REQUEST);
+        throw new common_1.HttpException('Invalid Credential', common_1.HttpStatus.BAD_REQUEST);
     }
     async login(username, password) {
         let user = await this.authenticate(username, password);

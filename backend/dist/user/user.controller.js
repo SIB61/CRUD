@@ -14,23 +14,64 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
-const createUser_dto_1 = require("./dto/createUser.dto");
+const jwtAuth_guard_1 = require("../auth/guards/jwtAuth.guard");
+const updateUserDto_1 = require("./dto/updateUserDto");
+const user_dto_1 = require("./dto/user.dto");
 const user_service_1 = require("./user.service");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
     }
     register(user) {
-        return this.userService.register(user);
+        return this.userService.createUser(user);
     }
+    getUser(username, req) {
+        if (username == req.user.username)
+            return this.userService.getMyProfile(username);
+        else
+            return this.userService.getUserProfile(username);
+    }
+    updateUser(username, user, req) {
+        const payload = req.user;
+        if (payload.username == username)
+            return this.userService.updateUser(username, user);
+        else
+            throw new common_1.HttpException("Don't have access", common_1.HttpStatus.BAD_REQUEST);
+    }
+    deleteUser() { }
 };
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [createUser_dto_1.CreateUserDto]),
+    __metadata("design:paramtypes", [user_dto_1.UserDto]),
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "register", null);
+__decorate([
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
+    (0, common_1.Get)(':username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "getUser", null);
+__decorate([
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
+    (0, common_1.Patch)(':username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, updateUserDto_1.UpdateUserDto, Object]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "updateUser", null);
+__decorate([
+    (0, common_1.Delete)(':username'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "deleteUser", null);
 UserController = __decorate([
     (0, common_1.Controller)('user'),
     __metadata("design:paramtypes", [user_service_1.UserService])

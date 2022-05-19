@@ -29,7 +29,7 @@ __decorate([
 __decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.UserEntity, (user) => user.blogs),
     (0, typeorm_1.JoinColumn)({ name: 'created_by' }),
-    __metadata("design:type", String)
+    __metadata("design:type", user_entity_1.UserEntity)
 ], BlogEntity.prototype, "createdBy", void 0);
 BlogEntity = __decorate([
     (0, typeorm_1.Entity)({ name: 'blogs' })
