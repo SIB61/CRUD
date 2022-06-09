@@ -30,7 +30,7 @@ let BlogController = class BlogController {
     async getAllBlogs() {
         return this.blogService.getAllBlogs();
     }
-    async getBlogsOfUser(username) {
+    async getBlogsByUser(username) {
         return this.blogService.getBlogsByUser(username);
     }
     async getBlog(id) {
@@ -50,12 +50,14 @@ let BlogController = class BlogController {
     }
     async updateBlog(id, blog, req) {
         let username = req.user.username;
-        let res;
-        this.blogService.getBlogById(id).then((blogEntity) => {
-            if (blogEntity.createdBy.username == username)
-                res = this.blogService.updateBlogById(id, blog);
+        return this.blogService.getBlogById(id).then((blogEntity) => {
+            if (blogEntity && blogEntity.createdBy.username == username)
+                return this.blogService.updateBlogById(id, blog);
+            else
+                throw new common_1.HttpException('Do not have permission', common_1.HttpStatus.BAD_REQUEST);
+        }, (_) => {
+            throw new common_1.HttpException('Server error', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
         });
-        return res;
     }
 };
 __decorate([
@@ -79,7 +81,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], BlogController.prototype, "getBlogsOfUser", null);
+], BlogController.prototype, "getBlogsByUser", null);
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
