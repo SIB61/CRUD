@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository, TypeORMError } from 'typeorm';
 import { UpdateUserDto } from './dto/updateUserDto';
 import { UserDto } from './dto/user.dto';
 import { UserEntity } from './entities/user.entity';
@@ -19,7 +19,14 @@ export class UserService {
     userEntity.firstName = userDto.firstname;
     userEntity.lastName = userDto.lastname;
     userEntity.passwordHash = await hash(userDto.password, 8);
-    return this.userRepo.save(userEntity);
+    return this.userRepo.insert(userEntity).then(
+      (value) => {
+        return value;
+      },
+      (error: QueryFailedError) => {
+        throw new HttpException(error.message, HttpStatus.CONFLICT);
+      },
+    );
   }
   async getMyProfile(username: string): Promise<UserEntity> {
     const user = await this.userRepo.findOne(username);
@@ -43,5 +50,8 @@ export class UserService {
       email: userDto.email,
     });
     return this.userRepo.update(username, userEntity);
+  }
+  async deleteUser(username: string) {
+    return this.userRepo.delete(username);
   }
 }

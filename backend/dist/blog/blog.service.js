@@ -11,6 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BlogService = void 0;
 const common_1 = require("@nestjs/common");
@@ -36,7 +47,8 @@ let BlogService = class BlogService {
             .find({ relations: ['createdBy'] })
             .then((blogs) => {
             blogs.map((blog) => {
-                blog.createdBy.passwordHash = null;
+                const _a = blog.createdBy, { passwordHash, registeredAt, updatedAt, email } = _a, result = __rest(_a, ["passwordHash", "registeredAt", "updatedAt", "email"]);
+                blog.createdBy = result;
                 return blog;
             });
             return blogs;
@@ -48,7 +60,8 @@ let BlogService = class BlogService {
             relations: ['createdBy'],
         })
             .then((blog) => {
-            blog.createdBy.passwordHash = null;
+            const _a = blog.createdBy, { passwordHash, email, registeredAt, updatedAt } = _a, result = __rest(_a, ["passwordHash", "email", "registeredAt", "updatedAt"]);
+            blog.createdBy = result;
             return blog;
         });
     }
@@ -57,6 +70,9 @@ let BlogService = class BlogService {
     }
     async updateBlogById(id, blogDto) {
         return this.blogRepo.update(id, blogDto);
+    }
+    async getBlogsByUser(username) {
+        return this.blogRepo.find({ where: { createdBy: username } });
     }
 };
 BlogService = __decorate([

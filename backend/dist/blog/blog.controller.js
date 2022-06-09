@@ -22,7 +22,7 @@ let BlogController = class BlogController {
     constructor(blogService) {
         this.blogService = blogService;
     }
-    createBlog(blogDto, req) {
+    async createBlog(blogDto, req) {
         const jwtPayload = req.user;
         const username = jwtPayload.username;
         return this.blogService.createBlog(username, blogDto);
@@ -30,15 +30,32 @@ let BlogController = class BlogController {
     async getAllBlogs() {
         return this.blogService.getAllBlogs();
     }
-    getBlogsOfUser(username) { }
+    async getBlogsOfUser(username) {
+        return this.blogService.getBlogsByUser(username);
+    }
     async getBlog(id) {
         return this.blogService.getBlogById(+id);
     }
-    deleteBlog(id) {
-        this.blogService.deleteBlogById(+id);
+    async deleteBlog(id, req) {
+        return this.blogService.getBlogById(+id).then((blog) => {
+            if (blog && blog.createdBy.username == req.user.username) {
+                return this.blogService.deleteBlogById(+id);
+            }
+            else {
+                throw new common_1.HttpException('Do Not have permission', common_1.HttpStatus.BAD_REQUEST);
+            }
+        }, (_) => {
+            throw new common_1.HttpException('Server error', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        });
     }
-    updateBlog(id, blog) {
-        this.blogService.updateBlogById(id, blog);
+    async updateBlog(id, blog, req) {
+        let username = req.user.username;
+        let res;
+        this.blogService.getBlogById(id).then((blogEntity) => {
+            if (blogEntity.createdBy.username == username)
+                res = this.blogService.updateBlogById(id, blog);
+        });
+        return res;
     }
 };
 __decorate([
@@ -48,25 +65,22 @@ __decorate([
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [blog_dto_1.BlogDto, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], BlogController.prototype, "createBlog", null);
 __decorate([
-    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], BlogController.prototype, "getAllBlogs", null);
 __decorate([
-    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':username/blogs'),
     __param(0, (0, common_1.Param)('username')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], BlogController.prototype, "getBlogsOfUser", null);
 __decorate([
-    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -77,18 +91,20 @@ __decorate([
     (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], BlogController.prototype, "deleteBlog", null);
 __decorate([
     (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, updateBlog_dto_1.UpdateBlogDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [Number, updateBlog_dto_1.UpdateBlogDto, Object]),
+    __metadata("design:returntype", Promise)
 ], BlogController.prototype, "updateBlog", null);
 BlogController = __decorate([
     (0, common_1.Controller)('blog'),

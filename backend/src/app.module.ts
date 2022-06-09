@@ -26,15 +26,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       max: 100,
       isGlobal: true,
     }),
-    /*    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      database: 'nest_crud',
-      entities: [BlogEntity, UserEntity],
-      synchronize: true,
-    }), */
   ],
   controllers: [AppController],
   providers: [

@@ -22,30 +22,34 @@ let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
     }
-    register(user) {
+    async register(user) {
         return this.userService.createUser(user);
     }
-    getUser(username, req) {
+    async getUser(username, req) {
         if (username == req.user.username)
             return this.userService.getMyProfile(username);
         else
             return this.userService.getUserProfile(username);
     }
-    updateUser(username, user, req) {
+    async updateUser(username, user, req) {
         const payload = req.user;
         if (payload.username == username)
             return this.userService.updateUser(username, user);
         else
             throw new common_1.HttpException("Don't have access", common_1.HttpStatus.BAD_REQUEST);
     }
-    deleteUser() { }
+    async deleteUser(username, req) {
+        if (username == req.user.username) {
+            this.userService.deleteUser(username);
+        }
+    }
 };
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [user_dto_1.UserDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "register", null);
 __decorate([
     (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
@@ -54,7 +58,7 @@ __decorate([
     __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUser", null);
 __decorate([
     (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
@@ -64,13 +68,16 @@ __decorate([
     __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, updateUserDto_1.UpdateUserDto, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUser", null);
 __decorate([
+    (0, common_1.UseGuards)(jwtAuth_guard_1.JwtAuthGuard),
     (0, common_1.Delete)(':username'),
+    __param(0, (0, common_1.Param)('username')),
+    __param(1, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "deleteUser", null);
 UserController = __decorate([
     (0, common_1.Controller)('user'),

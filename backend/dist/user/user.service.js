@@ -29,7 +29,11 @@ let UserService = class UserService {
         userEntity.firstName = userDto.firstname;
         userEntity.lastName = userDto.lastname;
         userEntity.passwordHash = await (0, bcrypt_1.hash)(userDto.password, 8);
-        return this.userRepo.save(userEntity);
+        return this.userRepo.insert(userEntity).then((value) => {
+            return value;
+        }, (error) => {
+            throw new common_1.HttpException(error.message, common_1.HttpStatus.CONFLICT);
+        });
     }
     async getMyProfile(username) {
         const user = await this.userRepo.findOne(username);
@@ -54,6 +58,9 @@ let UserService = class UserService {
             email: userDto.email,
         });
         return this.userRepo.update(username, userEntity);
+    }
+    async deleteUser(username) {
+        return this.userRepo.delete(username);
     }
 };
 UserService = __decorate([

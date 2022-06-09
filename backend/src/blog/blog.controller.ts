@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -14,6 +16,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwtAuth.guard';
 import { BlogService } from './blog.service';
 import { BlogDto } from './dto/blog.dto';
 import { UpdateBlogDto } from './dto/updateBlog.dto';
+import { BlogEntity } from './entities/blog.entity';
 
 @Controller('blog')
 export class BlogController {
@@ -21,23 +24,22 @@ export class BlogController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  createBlog(@Body() blogDto: BlogDto, @Request() req: any) {
+  async createBlog(@Body() blogDto: BlogDto, @Request() req: any) {
     const jwtPayload = req.user;
     const username = jwtPayload.username;
     return this.blogService.createBlog(username, blogDto);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllBlogs() {
     return this.blogService.getAllBlogs();
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':username/blogs')
-  getBlogsOfUser(@Param('username') username: string) {}
+  async getBlogsByUser(@Param('username') username: string) {
+    return this.blogService.getBlogsByUser(username);
+  }
 
-  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async getBlog(@Param('id') id: string) {
     return this.blogService.getBlogById(+id);
@@ -45,16 +47,51 @@ export class BlogController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  deleteBlog(@Param('id') id: string) {
-    this.blogService.deleteBlogById(+id);
+  async deleteBlog(@Param('id') id: string, @Request() req: any) {
+    return this.blogService.getBlogById(+id).then(
+      (blog: BlogEntity) => {
+        if (blog && blog.createdBy.username == req.user.username) {
+          return this.blogService.deleteBlogById(+id);
+        } else {
+          throw new HttpException(
+            'Do Not have permission',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      },
+      (_) => {
+        throw new HttpException(
+          'Server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      },
+    );
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  updateBlog(
+  async updateBlog(
     @Param('id', ParseIntPipe) id: number,
     @Body() blog: UpdateBlogDto,
+    @Request() req: any,
   ) {
-    this.blogService.updateBlogById(id, blog);
+    let username = req.user.username;
+    return this.blogService.getBlogById(id).then(
+      (blogEntity: BlogEntity) => {
+        if (blogEntity && blogEntity.createdBy.username == username)
+          return this.blogService.updateBlogById(id, blog);
+        else
+          throw new HttpException(
+            'Do not have permission',
+            HttpStatus.BAD_REQUEST,
+          );
+      },
+      (_) => {
+        throw new HttpException(
+          'Server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      },
+    );
   }
 }

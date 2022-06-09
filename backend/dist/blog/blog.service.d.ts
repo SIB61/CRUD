@@ -10,4 +10,5 @@ export declare class BlogService {
     getBlogById(id: number): Promise<BlogEntity>;
     deleteBlogById(id: number): Promise<import("typeorm").DeleteResult>;
     updateBlogById(id: number, blogDto: UpdateBlogDto): Promise<import("typeorm").UpdateResult>;
+    getBlogsByUser(username: string): Promise<BlogEntity[]>;
 }

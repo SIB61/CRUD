@@ -31,7 +31,9 @@ export class BlogService {
       .find({ relations: ['createdBy'] })
       .then((blogs: BlogEntity[]) => {
         blogs.map((blog: BlogEntity) => {
-          blog.createdBy.passwordHash=null
+          const { passwordHash, registeredAt, updatedAt, email, ...result } =
+            blog.createdBy;
+          blog.createdBy = result as UserEntity;
           return blog;
         });
         return blogs;
@@ -43,7 +45,9 @@ export class BlogService {
         relations: ['createdBy'],
       })
       .then((blog: BlogEntity) => {
-        blog.createdBy.passwordHash = null;
+        const { passwordHash, email, registeredAt, updatedAt, ...result } =
+          blog.createdBy;
+        blog.createdBy = result as UserEntity;
         return blog;
       });
   }
@@ -52,5 +56,8 @@ export class BlogService {
   }
   async updateBlogById(id: number, blogDto: UpdateBlogDto) {
     return this.blogRepo.update(id, blogDto);
+  }
+  async getBlogsByUser(username: string) {
+    return this.blogRepo.find({ where: { createdBy: username } });
   }
 }
