@@ -1,0 +1,13 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>{{ blog.title }}</mat-card-title>
+    <mat-card-subtitle>
+      blog by <span>{{ blog.createdBy.firstName }}</span>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>{{ blog.content }}</mat-card-content>
+  <mat-card-actions *ngIf="enabled">
+    <button mat-button (click)="update()">edit</button>
+    <button mat-button (click)="delete()">delete</button>
+  </mat-card-actions>
+</mat-card>

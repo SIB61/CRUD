@@ -1,0 +1,8 @@
+<div>
+  <div>
+    <app-profile [user]="user"></app-profile>
+  </div>
+  <div *ngFor="let blog of blogs">
+    <app-blogs user="all"></app-blogs>
+  </div>
+</div>

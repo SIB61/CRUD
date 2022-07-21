@@ -1,0 +1,19 @@
+<mat-toolbar color="primary">
+  <mat-toolbar-row class="app-bar">
+    <span routerLink="" style="cursor: pointer">Blog App</span>
+    <div [hidden]="hidden">
+      <button
+        mat-stroked-button
+        color="white"
+        routerLink="signup"
+        style="margin-right: 10px"
+      >
+        sign up
+      </button>
+      <button mat-flat-button routerLink="signin">sign in</button>
+    </div>
+    <div [hidden]="!hidden">
+      <button mat-button routerLink="home/profile">profile</button>
+    </div>
+  </mat-toolbar-row>
+</mat-toolbar>
