@@ -1,4 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { localizedString } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit } from '@angular/core';
 import { Blog } from 'src/app/shared/models/blog';
 import { User } from 'src/app/shared/models/user';
@@ -11,6 +12,7 @@ import { User } from 'src/app/shared/models/user';
 export class ProfilePageComponent implements OnInit {
   constructor(private http: HttpClient) {}
   user: User;
+  username: string = localStorage.getItem('username');
   blogs: Blog[];
   ngOnInit(): void {
     this.http

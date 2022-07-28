@@ -9,12 +9,16 @@ import { BlogsModule } from '../blogs/blogs.module';
 import { ProfilePageComponent } from './profile-page/profile-page.component';
 import { ProfileModule } from '../profile/profile.module';
 import { RouterModule } from '@angular/router';
+import { MainPageComponent } from './main-page/main-page.component';
+import { CreateBlogPageComponent } from './create-blog-page/create-blog-page.component';
 @NgModule({
   declarations: [
     LoginPageComponent,
     RegisterPageComponent,
     HomeComponent,
     ProfilePageComponent,
+    MainPageComponent,
+    CreateBlogPageComponent,
   ],
   imports: [
     ProfileModule,

@@ -6,7 +6,7 @@
     </mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>{{ blog.content }}</mat-card-content>
-  <mat-card-actions *ngIf="enabled">
+  <mat-card-actions *ngIf="blog.createdBy">
     <button mat-button (click)="update()">edit</button>
     <button mat-button (click)="delete()">delete</button>
   </mat-card-actions>

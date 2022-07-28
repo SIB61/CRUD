@@ -1,8 +1,14 @@
-<div>
-  <div>
+<div
+  class="page"
+  style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  "
+>
+  <div class="profile">
     <app-profile [user]="user"></app-profile>
   </div>
-  <div *ngFor="let blog of blogs">
-    <app-blogs user="all"></app-blogs>
-  </div>
+  <app-blogs [user]="user.username"></app-blogs>
 </div>

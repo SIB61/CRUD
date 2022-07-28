@@ -1,0 +1,30 @@
+<form class="form" [formGroup]="regForm">
+  <mat-form-field class="field">
+    <mat-label>firstname</mat-label>
+    <input matInput formControlName="firstname" />
+  </mat-form-field>
+  <mat-form-field class="field">
+    <mat-label>lastname</mat-label>
+    <input matInput formControlName="lastname" />
+  </mat-form-field>
+
+  <mat-form-field class="field">
+    <mat-label>email</mat-label>
+    <input matInput formControlName="email" />
+  </mat-form-field>
+  <mat-form-field class="field">
+    <mat-label>password</mat-label>
+    <input matInput formControlName="password" />
+  </mat-form-field>
+  <mat-dialog-actions>
+    <button mat-raised-button color="accent" mat-dialog-close>cancel</button>
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="regForm.invalid"
+      [mat-dialog-close]="regForm.value"
+    >
+      update
+    </button>
+  </mat-dialog-actions>
+</form>

@@ -1,5 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
-import { EventEmitter } from 'stream';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Blog } from '../../models/blog';
 
 @Component({
@@ -8,21 +7,22 @@ import { Blog } from '../../models/blog';
   styleUrls: ['./blog.component.scss'],
 })
 export class BlogComponent implements OnInit {
-  @Input() blog: Blog = {} as Blog;
-  @Output() ondelete: EventEmitter = new EventEmitter();
-  @Output() onupdate: EventEmitter = new EventEmitter();
+  @Input() blog: Blog;
+  @Output() ondelete: EventEmitter<void> = new EventEmitter();
+  @Output() onupdate: EventEmitter<void> = new EventEmitter();
 
-  enabled: boolean =
-    localStorage.getItem('username') == this.blog.createdBy.username;
-  constructor() {}
+  enabled: boolean = false;
+  constructor() {
+    console.warn(this.blog);
+  }
 
   ngOnInit(): void {
     console.log(this.blog);
   }
   update() {
-    this.onupdate.emit('delete');
+    this.onupdate.emit();
   }
   delete() {
-    this.onupdate.emit('delete');
+    this.onupdate.emit();
   }
 }

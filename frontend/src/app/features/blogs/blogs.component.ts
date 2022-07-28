@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { BlogsService } from './blogs.service';
 
 @Component({
@@ -16,6 +16,8 @@ export class BlogsComponent implements OnInit {
   async initBlogs() {
     this.blogsService.loadAllBlogs(this.user).subscribe((value) => {
       this.blogs = value;
+
+      console.warn(value);
     });
   }
 }
